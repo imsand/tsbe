@@ -30,6 +30,7 @@ public class SIM_Ready  implements Runnable{
 	OutputStream outputStream;
 	InputStream inputStream;
 	Boolean serialPortGeoeffnet = false;
+	Boolean sms = true;
 
 	int baudrate = 19200;
 	int dataBits = SerialPort.DATABITS_8;
@@ -50,16 +51,21 @@ public class SIM_Ready  implements Runnable{
 	
     public void run()
     {
+
         if (oeffneSerialPort(portName) != true)
         	return;
         
-    while {
+        while (sms = true) {
 		System.out.println("AT");
 		try {
 			Thread.sleep(10);
 		} catch(InterruptedException e) { }
-		sendeSerialPort("AT#MONI\r\n");
-			
+		sendeSerialPort("AT\r\n");
+		try {
+			Thread.sleep(10000);
+			System.out.println("Warten 10 Sekunden");
+		} catch(InterruptedException e) { }
+        }	
 }
     
 	boolean oeffneSerialPort(String portName)
@@ -117,17 +123,18 @@ public class SIM_Ready  implements Runnable{
 
 	void schliesseSerialPort()
 	{
-/*		try {
+		try {
 			Thread.sleep(1000);
 			System.out.println("Warten...");
-		} catch (InterruptedException e) { 
+		} catch (InterruptedException e) {
 
-		} */
+		}
 		if ( serialPortGeoeffnet == true) {
 			System.out.println("Schliesse Serialport");
 
 			serialPort.close();
 			serialPortGeoeffnet = false;	
+			
 
 		} else {
 			System.out.println("Serialport bereits geschlossen");
@@ -142,7 +149,6 @@ public class SIM_Ready  implements Runnable{
 			return;
 		try {
 			outputStream.write(nachricht.getBytes());
- 
 		} catch (IOException e) {
 			System.out.println("Fehler beim Senden");
 		}
@@ -153,12 +159,6 @@ public class SIM_Ready  implements Runnable{
 			byte[] data = new byte[150];
 			int num;
 			while(inputStream.available() > 0) {
-				try {
-					Thread.sleep(1000);
-					//System.out.println("Warten...");
-				} catch (InterruptedException e) { 
-
-				}
 				num = inputStream.read(data, 0, data.length);
 				System.out.println(new String(data, 0, num)); /* Antwort */
 				
