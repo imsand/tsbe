@@ -52,6 +52,8 @@ public class SIM_Ready  implements Runnable{
     {
         if (oeffneSerialPort(portName) != true)
         	return;
+  
+        
         
     while {
 		System.out.println("AT");
@@ -66,10 +68,10 @@ public class SIM_Ready  implements Runnable{
 	{
 		Boolean foundPort = false;
 		if (serialPortGeoeffnet != false) {
-			System.out.println("Serialport bereits geöffnet");
+			System.out.println("Serialport bereits geÃ¶ffnet");
 			return false;
 		}
-		System.out.println("öffne Serialport");
+		System.out.println("Ã¶ffne Serialport");
 		enumComm = CommPortIdentifier.getPortIdentifiers();
 		while(enumComm.hasMoreElements()) {
 			serialPortId = (CommPortIdentifier) enumComm.nextElement();
