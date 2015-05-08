@@ -6,24 +6,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
+import java.util.TimerTask;
 import java.util.TooManyListenersException;
 
 
-public class Communication  implements Runnable{
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args)
-	{
-		Runnable runnable = new Communication();
-		new Thread(runnable).start();
-		System.out.println("main finished");
-	}
+public class Communication  extends TimerTask {//Runnable{
 	
 	/**
 	 * 
 	 */
+	public String main;
 
 	CommPortIdentifier serialPortId;
 	Enumeration enumComm;
@@ -37,33 +29,28 @@ public class Communication  implements Runnable{
 	int stopBits = SerialPort.STOPBITS_1;
 	int parity = SerialPort.PARITY_NONE;
 	String portName = "/dev/tty.usbserial-013920002147B";
+	String atCommand;
 
-	public Communication()
-	{
-		System.out.println("Konstruktor: EinfachSenden");
-	}
-	
+		
+    public Communication(String atCommand) {
+    	this.atCommand = atCommand;
+    }
 
-	public void Sender()
-	{
-		System.out.println("Konstruktor: EinfachSenden");
-	}
-	
-    public void run()
+	public void run()
     {
         if (oeffneSerialPort(portName) != true)
         	return;
 
-		sendeSerialPort("AT$GPSACP\r\n");
+		sendeSerialPort(atCommand);
 			
-}
+    }
     
 	boolean oeffneSerialPort(String portName)
 	{
 		Boolean foundPort = false;
 		if (serialPortGeoeffnet != false) {
 			System.out.println("Serialport bereits geöffnet");
-			return false;
+			return true;
 		}
 		System.out.println("öffne Serialport");
 		enumComm = CommPortIdentifier.getPortIdentifiers();
@@ -113,12 +100,7 @@ public class Communication  implements Runnable{
 
 	void schliesseSerialPort()
 	{
-/*		try {
-			Thread.sleep(1000);
-			System.out.println("Warten...");
-		} catch (InterruptedException e) { 
 
-		} */
 		if ( serialPortGeoeffnet == true) {
 			System.out.println("Schliesse Serialport");
 
@@ -133,7 +115,7 @@ public class Communication  implements Runnable{
 	
 	void sendeSerialPort(String nachricht)
 	{
-		System.out.println("Sende: " + nachricht);
+		//System.out.println("Sende: " + nachricht);
 		if (serialPortGeoeffnet != true)
 			return;
 		try {
@@ -150,25 +132,32 @@ public class Communication  implements Runnable{
 			int num;
 			while(inputStream.available() > 0) {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(2000);
 					//System.out.println("Warten...");
 				} catch (InterruptedException e) { 
 
 				}
 				num = inputStream.read(data, 0, data.length);
-				System.out.println(new String(data, 0, num)); /* Antwort */
+				//System.out.println(new String(data, 0, num)); /* Antwort */
+				String antwort = new String(data, 13, 82);
+				System.out.println(antwort);
 				
+				
+				DBController db = DBController.getInstance();
+				db.handleDB(antwort);
 			}
+			inputStream.reset();
 		} catch (IOException e) {
-			System.out.println("Fehler beim Lesen empfangener Daten");
+			//System.out.println("Fehler beim Lesen empfangener Daten");
 		}
-		schliesseSerialPort();
+
+		//schliesseSerialPort();
 		
 	}
 	
 	class serialPortEventListener implements SerialPortEventListener {
 		public void serialEvent(SerialPortEvent event) {
-			//System.out.println("serialPortEventlistener");
+			System.out.println("serialPortEventlistener");
 			switch (event.getEventType()) {
 			case SerialPortEvent.DATA_AVAILABLE:
 				serialPortDatenVerfuegbar();
