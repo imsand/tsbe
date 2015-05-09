@@ -39,7 +39,8 @@ class DBController {
 			e.printStackTrace();
 		}
 	}
-
+	
+	// Verbindung zu Datenbank wird hergestellt
 	private void initDBConnection() {
 		try {
 			if (connection != null)
@@ -87,13 +88,6 @@ class DBController {
 				s = s.replace("GPSACP:", "");
 				String[] a = s.split(",");
 
-				// s=s.
-
-				// UTC, latitude, longitude, hdop, altitude, fix, cog, spkm,
-				// spkn, date, nsat
-
-				// Timestamp gibt long zurück
-				// System.currentTimeMillis()
 
 				Statement stmt = connection.createStatement();
 				// stmt.executeUpdate("DROP TABLE IF EXISTS mocdata;");
@@ -119,35 +113,10 @@ class DBController {
 				
 				System.out.println("geschrieben " +s);
 
-				// PreparedStatement ps = connection
-				// .prepareStatement("INSERT INTO mocdata VALUES (?, ?, ?);");
-
-				// System.out.println(zahl[0]);
-
-				// Wenn Int Wert vorhanden kann dies in Klammer so angegeben
-				// werden:
-				// ps.setInt(1, zahl1);
-				/*
-				 * ps.setInt(1, 321); ps.setInt(2, 321); ps.setInt(3, 321);
-				 * ps.addBatch();
-				 */
-				/*
-				 * ps.setString(1, "Anton Antonius"); ps.setString(2,
-				 * "Anton's Alarm"); ps.setDate(3, Date.valueOf("2009-10-01"));
-				 * ps.setInt(4, 123); ps.setDouble(5, 98.76); ps.addBatch();
-				 */
 				connection.setAutoCommit(true);
 				// ps.executeBatch();
 				// connection.setAutoCommit(true);
 
-				ResultSet rs = stmt.executeQuery("SELECT * FROM mocdata;");
-				while (rs.next()) {
-					// System.out.println("altitude = " +
-					// rs.getInt("altitude"));
-					// System.out.println("tempo = " + rs.getInt("tempo"));
-					// System.out.println("time = " + rs.getInt("time"));
-				}
-				rs.close();
 				if (y == 5) {
 					connection.close();
 				} else {
